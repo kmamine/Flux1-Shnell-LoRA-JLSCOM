@@ -284,12 +284,26 @@ To specify :
         low_vram: true  # uncomment this if the GPU is connected to your monitors. It will use less vram to quantize, but is slower.
 ```
 
+To visualize some results during training: 
+1. `sampler`: refers to the algorithm used during the image generation process to sample from the model's learned distribution.
+2. `sample_every` after how many updates we should sample some results. 
+3. `width` and `height` of the sampled image. 
+4. `prompts`: the list of prompts to test the images.
 
 ```yaml
-
+      sample:
+        sampler: "flowmatch" # must match train.noise_scheduler
+        sample_every: 50 # sample every this many steps
+        width: 1024
+        height: 1024
+        prompts:
+          # you can add [trigger] to the prompts here and it will be replaced with the trigger word
+          - "[trigger] holding a sign that says 'I LOVE PROMPTS!'"
+    
 ```
-
+The number of steps to sample (generate) the image:
 
 ```yaml
+        sample_steps: 4 
 
 ```
