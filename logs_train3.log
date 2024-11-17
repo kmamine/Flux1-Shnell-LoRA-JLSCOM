@@ -1,0 +1,967 @@
+(ai-toolkit) (base) aladine@OR-PRI-26G47:/media/aladine/DataDisk8T/amine_dev/FLUXJLSCOM/ai-toolkit$ python run.py config/train_lora_flux_schnell_24gb_JLSCOM.yaml 
+Running 1 job
+/home/aladine/miniconda3/envs/ai-toolkit/lib/python3.11/site-packages/albumentations/__init__.py:13: UserWarning: A new version of Albumentations is available: 1.4.21 (you have 1.4.15). Upgrade using: pip install -U albumentations. To disable automatic update checks, set the environment variable NO_ALBUMENTATIONS_UPDATE to 1.
+  check_for_updates()
+/home/aladine/miniconda3/envs/ai-toolkit/lib/python3.11/site-packages/controlnet_aux/mediapipe_face/mediapipe_face_common.py:7: UserWarning: The module 'mediapipe' is not installed. The package will have limited functionality. Please install it using the command: pip install 'mediapipe'
+  warnings.warn(
+/home/aladine/miniconda3/envs/ai-toolkit/lib/python3.11/site-packages/timm/models/layers/__init__.py:48: FutureWarning: Importing from timm.models.layers is deprecated, please import via timm.layers
+  warnings.warn(f"Importing from {__name__} is deprecated, please import via timm.layers", FutureWarning)
+/home/aladine/miniconda3/envs/ai-toolkit/lib/python3.11/site-packages/timm/models/registry.py:4: FutureWarning: Importing from timm.models.registry is deprecated, please import via timm.models
+  warnings.warn(f"Importing from {__name__} is deprecated, please import via timm.models", FutureWarning)
+/home/aladine/miniconda3/envs/ai-toolkit/lib/python3.11/site-packages/controlnet_aux/segment_anything/modeling/tiny_vit_sam.py:654: UserWarning: Overwriting tiny_vit_5m_224 in registry with controlnet_aux.segment_anything.modeling.tiny_vit_sam.tiny_vit_5m_224. This is because the name being registered conflicts with an existing name. Please check if this is not expected.
+  return register_model(fn_wrapper)
+/home/aladine/miniconda3/envs/ai-toolkit/lib/python3.11/site-packages/controlnet_aux/segment_anything/modeling/tiny_vit_sam.py:654: UserWarning: Overwriting tiny_vit_11m_224 in registry with controlnet_aux.segment_anything.modeling.tiny_vit_sam.tiny_vit_11m_224. This is because the name being registered conflicts with an existing name. Please check if this is not expected.
+  return register_model(fn_wrapper)
+/home/aladine/miniconda3/envs/ai-toolkit/lib/python3.11/site-packages/controlnet_aux/segment_anything/modeling/tiny_vit_sam.py:654: UserWarning: Overwriting tiny_vit_21m_224 in registry with controlnet_aux.segment_anything.modeling.tiny_vit_sam.tiny_vit_21m_224. This is because the name being registered conflicts with an existing name. Please check if this is not expected.
+  return register_model(fn_wrapper)
+/home/aladine/miniconda3/envs/ai-toolkit/lib/python3.11/site-packages/controlnet_aux/segment_anything/modeling/tiny_vit_sam.py:654: UserWarning: Overwriting tiny_vit_21m_384 in registry with controlnet_aux.segment_anything.modeling.tiny_vit_sam.tiny_vit_21m_384. This is because the name being registered conflicts with an existing name. Please check if this is not expected.
+  return register_model(fn_wrapper)
+/home/aladine/miniconda3/envs/ai-toolkit/lib/python3.11/site-packages/controlnet_aux/segment_anything/modeling/tiny_vit_sam.py:654: UserWarning: Overwriting tiny_vit_21m_512 in registry with controlnet_aux.segment_anything.modeling.tiny_vit_sam.tiny_vit_21m_512. This is because the name being registered conflicts with an existing name. Please check if this is not expected.
+  return register_model(fn_wrapper)
+{
+    "type": "sd_trainer",
+    "training_folder": "output/training_3",
+    "performance_log_every": 10,
+    "device": "cuda:0",
+    "trigger_word": "JLSCOM",
+    "network": {
+        "type": "lora",
+        "linear": 32,
+        "linear_alpha": 32
+    },
+    "save": {
+        "dtype": "float16",
+        "save_every": 50,
+        "max_step_saves_to_keep": 20,
+        "push_to_hub": true,
+        "hf_repo_id": "Amine-CV/JLSCOM_garment_LoRA_flux_schnell_v1"
+    },
+    "datasets": [
+        {
+            "folder_path": "../imgs",
+            "caption_ext": "txt",
+            "caption_dropout_rate": 0.05,
+            "shuffle_tokens": false,
+            "cache_latents_to_disk": true,
+            "resolution": [
+                512,
+                768,
+                1024
+            ]
+        }
+    ],
+    "train": {
+        "batch_size": 1,
+        "steps": 4000,
+        "gradient_accumulation_steps": 1,
+        "train_unet": true,
+        "train_text_encoder": false,
+        "gradient_checkpointing": true,
+        "noise_scheduler": "flowmatch",
+        "optimizer": "adamw8bit",
+        "lr": 5e-06,
+        "skip_first_sample": true,
+        "ema_config": {
+            "use_ema": true,
+            "ema_decay": 0.99
+        },
+        "dtype": "bf16"
+    },
+    "model": {
+        "name_or_path": "black-forest-labs/FLUX.1-schnell",
+        "assistant_lora_path": "ostris/FLUX.1-schnell-training-adapter",
+        "is_flux": true,
+        "quantize": true,
+        "low_vram": true
+    },
+    "sample": {
+        "sampler": "flowmatch",
+        "sample_every": 50,
+        "width": 1024,
+        "height": 1024,
+        "prompts": [
+            "[trigger] Garment Type: Slim-Fit Jeans Fit and Style: Slim-fit, designed to hug the legs closely without being overly tight, offering a contemporary, streamlined appearance. Color and Pattern: Soft pastel green in a solid shade, adding a subtle pop of color to outfits while maintaining a minimalist, modern look. Fabric/Material: Crafted from a stretch cotton blend, providing comfort, flexibility, and durability. Details: Traditional five-pocket design with two front pockets, two back pockets, and a small coin pocket, all seamlessly integrated for functionality and style. Display Style: Displayed in a flat lay to highlight the overall structure and color. Background and Lighting: Set against a light gray background with soft, even lighting to bring out the pastel hue of the jeans without overshadowing it. Shape: Fitted shape with a tapered leg, maintaining a sleek and tailored silhouette from hip to ankle. Closures: Secured with a standard button and zipper fly in matching tones for a seamless look. Branding: Minimal branding with a discreet internal label; no external logos, maintaining a clean, understated aesthetic. Cuffs and Hems: Clean, stitched hems at the ankle, allowing the jeans to be worn full-length or slightly rolled for a casual look. Fit: Slim yet comfortable, allowing ease of movement while staying fitted through the legs. Length: Full length, designed to sit right at the ankle, suitable for pairing with both casual and semi-formal footwear. Occasion: Versatile enough for both casual daily wear and smart-casual occasions, adding a fresh twist to any wardrobe. Style Influence: Inspired by modern minimalist fashion, with a focus on clean lines and a refined color palette. Seasonal Suitability: Ideal for spring and summer wear due to the light color and breathable fabric. Texture: Smooth, soft finish with a hint of stretch, ensuring comfort during prolonged wear. Weight: Medium weight, suitable for warm weather without feeling too thin. Finish: Matte finish, enhancing the soft, pastel tone for a polished, sophisticated look. Aesthetic Style: Casual chic, blending comfort with a contemporary style that is effortlessly versatile. Target Audience: Suitable for individuals seeking stylish yet comfortable jeans with a unique color that is easy to style. Ease of Care: Machine washable, with colorfastness to retain the pastel shade after multiple washes.",
+            "[trigger] Garment Type: Blazer Fit and Style: Regular fit with a tailored, classic style that combines formality with a modern touch. Color and Pattern: Soft sage green in a solid color, providing a subtle, sophisticated look. Fabric/Material: Made from a lightweight, smooth wool blend, offering both comfort and a structured appearance. Details: Features two-button closure at the front, with a notched lapel collar for a classic blazer look. Includes a single welt pocket on the chest and two large patch pockets at the lower front for a stylish yet practical detail. Display Style: Displayed in a flat lay to clearly showcase the entire structure and details of the blazer. Background and Lighting: Light gray background with soft, even lighting to emphasize the blazer's color and details without distractions. Shape: Structured, slightly fitted shape that follows a traditional blazer silhouette. Sleeve Style: Long sleeves with a slight taper towards the wrist, finished with simple cuffs. Closures: Front two-button closure with matte black buttons, adding to the minimalistic and versatile design. Branding: Discreet internal branding tag near the neckline, keeping the outer look clean and unbranded. Pockets: Three pockets total'one welt pocket on the chest and two patch pockets at the front, providing both functional and decorative elements. Cuffs and Hems: Standard blazer hemline with neatly finished cuffs. Fit: Tailored, providing a structured and polished look without being overly slim. Length: Standard blazer length, designed to sit at the hip. Occasion: Suitable for formal occasions, work, or smart-casual settings, adding a refined touch to any outfit. Style Influence: Minimalist with classic tailoring, suitable for a modern professional look. Seasonal Suitability: Ideal for spring and autumn due to its lightweight wool blend material. Texture: Smooth with a slight sheen, giving a refined and polished appearance. Weight: Medium weight, providing structure without being too heavy, ideal for layering over shirts or light sweaters. Finish: Matte finish, keeping the look understated and versatile for various settings. Aesthetic Style: Clean, classic, and modern, suitable for professionals and style-conscious individuals. Target Audience: Individuals looking for a versatile blazer that can transition from formal work settings to more relaxed social gatherings. Ease of Care: Dry clean recommended to maintain fabric quality and structure.",
+            "[trigger] Garment Type: Denim Shorts Fit and Style: Regular fit with a classic, relaxed style, offering comfort without being overly tight or baggy. Color and Pattern: Light blue with a subtle faded wash, giving it a vintage-inspired look and adding visual texture to the fabric. Fabric/Material: Made from soft, breathable denim, likely a cotton blend for comfort and durability. Details: Traditional five-pocket design with two front pockets, two back pockets, and a small coin pocket within the right front pocket. Button closure and zipper fly for secure fastening. Display Style: Displayed in a flat lay, showcasing the shorts' full length, pockets, and seams. Background and Lighting: Light gray background with soft lighting, highlighting the light blue denim color and subtle fading. Shape: Straight shape with a relaxed fit, ensuring comfort around the thighs and hips. Closures: Front button and zipper closure, a classic feature in denim shorts for easy wear. Embellishments: Minimal design with no additional embellishments, maintaining a clean and simple aesthetic. Branding: Discreet brand tag on the internal waistband; no external logos. Patterns/Prints: Solid denim with a faded wash effect, adding dimension without any specific patterns or prints. Pockets: Five-pocket design for both style and functionality, allowing for small item storage. Cuffs and Hems: Standard hem style, ending just above the knee, offering a casual and versatile length. Fit: Regular fit that balances comfort and style, suitable for various body types. Length: Knee-length, ideal for warm weather and casual wear. Occasion: Perfect for casual, everyday wear during spring and summer, or for outdoor and relaxed settings. Style Influence: Classic and timeless, inspired by traditional denim styles with a slight vintage wash for a modern twist. Seasonal Suitability: Best suited for spring and summer, given its breathable fabric and knee-length design. Texture: Smooth denim texture, slightly faded for added character. Weight: Medium weight, providing durability without being too heavy, ideal for warmer climates. Finish: Matte finish with a faded wash effect, giving it a lived-in, relaxed appearance. Aesthetic Style: Simple, casual, and versatile, fitting well into a variety of everyday wardrobes. Target Audience: Suitable for individuals seeking a comfortable and classic pair of denim shorts for casual wear. Ease of Care: Machine washable for easy maintenance, durable enough for frequent wear.",
+            "[trigger] Garment Type: Chino Pants Fit and Style: Regular fit with a classic, casual style, offering a comfortable and versatile silhouette. Color and Pattern: Solid olive green, adding a subtle yet stylish touch to a neutral wardrobe. Fabric/Material: Made from a durable cotton blend, providing comfort with a slight stretch for flexibility. Details: Includes belt loops and a button with zipper closure, adding functionality while maintaining a clean look. Display Style: Displayed in a flat lay, highlighting the shape and structure of the pants. Background and Lighting: Light gray background with soft, even lighting that enhances the color and minimalist design. Shape: Straight-leg shape with a relaxed but structured fit, ideal for casual and semi-formal occasions. Closures: Front button and zipper closure for ease of wear and a secure fit. Embellishments: No embellishments, keeping the design simple and versatile. Branding: Likely includes a discreet internal label; no visible external branding for a clean look. Patterns/Prints: Solid color with no patterns or prints, emphasizing a minimalist, versatile aesthetic. Pockets: Four-pocket design, featuring two front slash pockets and two rear welt pockets, providing practical storage without disrupting the streamlined appearance. Cuffs and Hems: Finished hems with a slight roll-up detail, adding a subtle casual touch. Fit: Regular fit, offering a balance between tailored and relaxed for everyday comfort. Length: Full length, intended to reach the ankle or slightly above when rolled. Occasion: Suitable for casual outings, smart-casual settings, or weekend wear, pairing well with a variety of tops. Style Influence: Minimalist and classic, with a utilitarian feel that makes it adaptable for different styles. Seasonal Suitability: Ideal for spring and fall, with a medium-weight fabric that offers comfort in mild weather. Texture: Smooth and slightly textured, providing a refined look with a soft touch. Weight: Medium weight, suitable for transitioning between seasons. Finish: Matte finish, enhancing the subtle elegance and versatility of the pants. Aesthetic Style: Classic and functional, appealing to those who prefer understated, adaptable wardrobe staples. Target Audience: Perfect for individuals seeking comfortable yet stylish pants that can be dressed up or down. Ease of Care: Machine washable for easy maintenance, making it a practical addition to any wardrobe.",
+            "[trigger] Garment Type: Half-Zip Sweater Fit and Style: Regular fit with a slightly tailored silhouette, offering a balanced look that isn't too snug or too loose, suitable for layering. Color and Pattern: Dark heathered gray on the main body with solid black on the sleeves, shoulders, and cuffs. The sweater has a subtle color-blocked design that adds contrast and visual interest. Fabric/Material: Made from a soft and durable blend of cotton and polyester, providing warmth and breathability. Details: Features a quarter-length zip closure at the neckline for adjustability and styling flexibility, along with a single welt pocket on the left chest for added functionality and style. Display Style: Displayed in a flat lay style, giving a clear view of the design and structure of the garment. Background and Lighting: Set against a neutral gray background with soft, even lighting that highlights the contrast between the gray and black areas of the sweater. Shape: Slightly tapered at the waist and cuffs, providing a clean and structured look. Sleeve Style: Long sleeves in solid black, contributing to the color-blocked effect. Neckline: High collar with a half-zip for added versatility and a modern, sporty look. Closures: Half-zip closure at the neck with a metal zipper, allowing for easy adjustments to the neckline. Cuffs and Hems: Ribbed cuffs and hem to provide a snug fit and help retain warmth, adding to the overall polished look. Fit: Regular fit that maintains comfort and ease of movement, making it suitable for everyday wear. Length: Standard length, falling around the hip, suitable for both layering and wearing alone. Occasion: Ideal for casual outings, relaxed office environments, or cool-weather activities. Style Influence: A blend of sporty and casual influences, offering a versatile look that works well in urban or laid-back settings. Seasonal Suitability: Suited for fall and winter, with a design that provides warmth while being comfortable for transitional weather. Texture: Smooth fabric on the body with a slight heathered effect, contrasting with the solid, slightly textured black on the sleeves. Weight: Medium weight, providing warmth without being overly bulky. Finish: Matte finish, lending a sophisticated and modern look to the garment. Layer Style: Can be layered over a T-shirt or under a jacket for added warmth. Collar Type: High collar with zip functionality, providing both style and protection against cooler weather. Aesthetic Style: Modern, minimalist with a sporty edge, appealing to those who prefer subtle yet stylish details. Size Labeling: Standard fit, to accommodate various body types. Climate Suitability: Perfect for mild to cool climates where a lightweight yet warm layer is needed. Target Audience: Designed for individuals who enjoy practical, comfortable, and stylish apparel that can transition between casual and slightly dressed-up looks. Style Preferences: Appeals to those who prefer versatile, understated fashion with a hint of athletic influence. Ease of Care: Machine washable for easy maintenance and durability. This half-zip sweater combines practicality and style, with a modern color-blocked design that provides visual contrast. Its regular fit, warm fabric, and versatile look make it a reliable choice for cooler weather, perfect for layering or wearing on its own.",
+            "[trigger] Garment Type: Chino Pants Fit and Style: Tailored slim-fit chinos, offering a modern and polished appearance suitable for both casual and semi-formal occasions. Color and Pattern: Soft beige color with a solid, clean finish, making it versatile and easy to pair with various tops. Fabric/Material: Made from a high-quality cotton blend, ensuring breathability and comfort with a slight stretch for ease of movement. Details: Features a classic design with belt loops, a front button closure, and a zip fly. There are no visible logos, maintaining a minimalist aesthetic. Display Style: Displayed in a flat lay format to showcase the structure and length clearly. Background and Lighting: Set against a light cream background with soft, diffused lighting to enhance the neutral tone of the fabric. Shape: Slim, tapered shape that offers a clean silhouette without appearing too tight. Closures: Front button and zipper closure provide a secure and classic look. Pockets: Includes two side pockets and two back welt pockets, adding functionality without disrupting the streamlined appearance. Cuffs and Hems: Finished with a standard hem at the ankles, giving a neat and classic look that works well with both dress shoes and casual footwear. Fit: Slim-fit, offering a modern look that's both stylish and comfortable. Length: Full-length chinos that reach the ankles, suitable for a variety of occasions. Occasion: Ideal for both casual and business-casual settings; can be dressed up or down with ease. Style Influence: Inspired by classic menswear with a touch of contemporary minimalism, making it a wardrobe staple. Seasonal Suitability: Suitable for all seasons, particularly spring and autumn, due to the breathable cotton material. Texture: Smooth and soft to the touch, providing a comfortable wear experience. Weight: Lightweight, making it comfortable for day-long wear. Finish: Matte finish, contributing to the sophisticated look of the pants. Aesthetic Style: Clean and minimal, catering to a classic yet contemporary style preference. Target Audience: Designed for individuals seeking a polished look that balances style with comfort. Ease of Care: Machine washable and easy to care for, adding to its practicality for everyday wear. These chinos are a versatile, refined addition to any wardrobe, offering a polished, understated style suitable for both work and leisure. Their neutral color and tailored fit make them ideal for a range of outfit combinations, providing an effortlessly stylish look.",
+            "[trigger] Garment Type: Turtleneck sweater Fit and Style: Regular fit, slightly relaxed for a cozy yet polished appearance, suitable for layering or wearing alone. Color and Pattern: Solid, creamy off-white color with no additional patterns, giving it a clean, minimalist look. Fabric/Material: Made from a soft, warm wool or wool-blend fabric, ideal for maintaining warmth while providing breathability. Details: Ribbed texture around the turtleneck, cuffs, and hem for added style and durability, with a fine knit texture across the body and sleeves. Display Style: Displayed in a flat lay style, showing the entire sweater's design and structure clearly. Background and Lighting: Set against a light grey background with soft, diffused lighting, creating a neutral and inviting mood that complements the sweater's color. Shape: Straight shape with a slightly boxy silhouette, designed to drape comfortably without clinging to the body. Sleeve Style: Long sleeves with ribbed cuffs that provide a snug fit around the wrists, adding a refined detail to the overall design. Neckline: High turtleneck collar, ribbed for texture and warmth, designed to fold over or stand upright depending on the wearer's preference. Closures: No closures, emphasizing the pullover style of the sweater. Embellishments: None, keeping the look simple and classic. Branding: No visible branding, aligning with a minimalist, unbranded style. Cuffs and Hems: Ribbed cuffs and hem add subtle structure and a tailored finish to the overall relaxed fit. Fit: Regular fit, providing enough room for comfort while still maintaining a tailored look. Length: Standard length, ending around the hip, making it versatile for pairing with jeans, trousers, or skirts. Occasion: Suitable for casual, business casual, or semi-formal settings, depending on styling. Style Influence: Minimalist and classic, perfect for a timeless wardrobe. Seasonal Suitability: Ideal for fall and winter wear due to the insulating material and high neckline. Texture: Soft, smooth wool texture with a ribbed finish on the turtleneck, cuffs, and hem. Weight: Medium-weight fabric, balancing warmth and comfort. Finish: Matte finish, enhancing its cozy appearance. Aesthetic Style: Simple yet chic, suitable for those who appreciate a minimalist, high-quality look. Target Audience: Designed for individuals seeking versatile, comfortable, and elegant winter clothing. Ease of Care: Likely requires gentle washing or dry cleaning to maintain quality. This turtleneck sweater is a wardrobe staple that combines comfort, warmth, and a refined, minimalist style, perfect for a range of casual to semi-formal settings.",
+            "[trigger] Garment Type: Corduroy Jacket Fit and Style: Relaxed fit with a minimalist, utilitarian style. Color and Pattern: Light cream, solid color with a smooth, uniform look. Fabric/Material: Made from corduroy, giving it a soft, textured feel with visible ridges. Details: Features two large, square patch pockets on the chest, adding a functional and balanced look. Display Style: Displayed in a flat lay, showcasing the full front of the jacket. Background and Lighting: Beige background with soft, diffused lighting, emphasizing the jacket's light color and texture. Shape: Slightly boxy shape, providing a relaxed, unstructured silhouette. Sleeve Style: Long sleeves with a standard cuff style, ending at the wrist. Neckline: Features a classic spread collar for a clean, polished look. Closures: Full-length front zipper closure, adding a modern, streamlined look. Embellishments: No additional embellishments, maintaining a minimalist aesthetic. Branding: Discreet inner label tag at the neckline; no external branding visible. Patterns/Prints: Solid color with a natural corduroy texture. Pockets: Two front chest pockets with a square shape and open top for easy access. Cuffs and Hems: Simple, finished hems on sleeves and bottom; no added detail for a clean look. Fit: Relaxed fit for comfortable layering over other clothing. Length: Standard jacket length, ending just above the hip. Occasion: Suitable for casual wear, offering a versatile layer for everyday outfits. Style Influence: Minimalist and utilitarian, inspired by workwear aesthetics. Seasonal Suitability: Ideal for fall and mild winter days due to its slightly heavier fabric. Texture: Soft corduroy texture with subtle ridges for a tactile, cozy feel. Weight: Medium weight, providing some warmth without being bulky. Finish: Matte finish, maintaining the fabric's natural appearance. Layer Style: Great as a top layer over T-shirts or light sweaters. Collar Type: Spread collar, giving a structured yet casual vibe. Aesthetic Style: Simple, functional aesthetic with a nod to vintage workwear. Target Audience: Perfect for individuals who value understated, practical clothing with a hint of vintage charm. Ease of Care: Likely machine washable, with care recommended for the corduroy fabric.",
+            "[trigger] Garment Type: Quarter-Zip Knit Sweater Fit and Style: This sweater has a relaxed yet tailored fit, making it suitable for layering over shirts or wearing solo for a polished, casual look. Color and Pattern: Light heather grey, with a solid color and no additional patterns, offering a minimalist aesthetic. Fabric/Material: Crafted from a soft wool-blend knit, providing warmth and comfort while remaining lightweight. Details: Features a quarter-zip closure with a metal zipper, adding a modern touch and versatility to the classic sweater design. No visible logos or branding, keeping the look clean and sophisticated. Display Style: Displayed flat lay, showcasing the sweater's structure and fit without distractions. Background and Lighting: Set against a soft beige background with gentle lighting to highlight the texture and neutral tone of the sweater. Shape: Straight silhouette with a slightly fitted shape, ensuring a comfortable and refined appearance. Sleeve Style: Long sleeves with ribbed cuffs that fit snugly around the wrists, adding structure to the design. Neckline: Polo-style collar with a quarter-zip that allows for adjustable coverage at the neck, creating options for styling. Closures: Quarter-zip closure located at the center front, offering an adjustable neckline. Cuffs and Hems: Ribbed cuffs and hem to provide a structured fit and prevent stretching over time. Fit: Relaxed fit that maintains a tailored appearance, suitable for both casual and semi-formal settings. Length: Falls at the hip, offering a classic sweater length that pairs well with various bottoms. Occasion: Ideal for smart-casual and business-casual settings, as well as relaxed outings during cooler seasons. Style Influence: Minimalist design with a modern touch, perfect for understated, versatile wardrobes. Seasonal Suitability: Suitable for fall and winter due to the wool-blend material, which offers warmth without bulk. Texture: Soft knit texture that gives a cozy and refined feel, adding a subtle visual interest. Weight: Medium-weight, ensuring warmth and comfort without feeling overly heavy. Finish: Matte finish, contributing to the sweater's sophisticated and understated aesthetic. Layer Style: Works well as a top layer over shirts or under coats, providing versatility for different looks. Collar Type: Polo-style collar with a zipper, blending classic and contemporary elements. Aesthetic Style: Simple, clean, and chic, suitable for those who appreciate refined yet relaxed pieces. Target Audience: Designed for individuals seeking a blend of comfort, warmth, and style in cooler months. Ease of Care: Likely requires gentle washing, such as hand-washing or machine-washing on a wool cycle to maintain its texture and quality. This light heather grey quarter-zip sweater is a versatile and stylish addition, perfect for layering and providing warmth while maintaining a minimalist, modern appeal.",
+            "[trigger] Garment Type: Drawstring Trousers Fit and Style: Relaxed-fit trousers with a casual yet polished aesthetic, suitable for both informal and semi-formal settings. Color and Pattern: Dark charcoal gray with a subtle, solid pattern that offers a sleek, versatile look. Fabric/Material: Likely a soft blend of cotton and polyester, providing comfort, durability, and a hint of stretch. Details: Features an elastic waistband with a drawstring closure for adjustable comfort, and two side pockets for functionality. Display Style: Displayed in a flat lay, allowing a clear view of the garment's shape, style, and details. Background and Lighting: Set against a light, neutral background with soft lighting, emphasizing the trousers' dark tone and clean lines. Shape: Straight-leg cut that gives a streamlined silhouette, with a slightly tapered look at the hem for a modern feel. Closures: Elasticated waistband with a drawstring, allowing for a secure, customizable fit without the need for a belt. Pockets: Two slanted side pockets for convenient storage, designed to be functional without disrupting the garment's smooth lines. Cuffs and Hems: Simple hem style, giving a neat finish to the trouser legs. Fit: Relaxed fit, balancing comfort with a tailored appearance. Length: Full-length trousers that fall straight to the ankles, versatile for various occasions. Occasion: Suitable for casual outings, work-from-home days, or even dressed up for a smart-casual event. Style Influence: Minimalist and modern, with a hint of athleisure influence due to the drawstring waistband. Seasonal Suitability: Ideal for year-round wear, thanks to its versatile color and comfortable material. Texture: Smooth, with a slight texture that adds depth to the dark color without detracting from the overall sleekness. Weight: Medium-weight fabric, suitable for layering in cooler weather or as standalone wear in moderate climates. Aesthetic Style: Casual chic with a functional design, bridging the gap between casual comfort and refined style. Target Audience: Designed for individuals seeking a comfortable yet stylish option for casual or semi-formal wear. Ease of Care: Likely machine washable, making it easy to care for and maintain. These dark charcoal drawstring trousers offer a versatile addition to any wardrobe, combining relaxed comfort with a polished, minimalist aesthetic. The elastic waistband and soft fabric make them ideal for all-day wear, while the streamlined silhouette allows for effortless styling across different occasions."
+        ],
+        "neg": "",
+        "seed": 42,
+        "walk_seed": true,
+        "guidance_scale": 1,
+        "sample_steps": 4
+    }
+}
+Using EMA
+/media/aladine/DataDisk8T/amine_dev/FLUXJLSCOM/ai-toolkit/extensions_built_in/sd_trainer/SDTrainer.py:61: FutureWarning: `torch.cuda.amp.GradScaler(args...)` is deprecated. Please use `torch.amp.GradScaler('cuda', args...)` instead.
+  self.scaler = torch.cuda.amp.GradScaler()
+
+#############################################
+# Running job: JLSCOM_garment_LoRA_flux_schnell
+#############################################
+
+
+Running  1 process
+Loading Flux model
+Loading transformer
+Grabbing lora from the hub: ostris/FLUX.1-schnell-training-adapter
+Fusing in LoRA
+Quantizing transformer
+Loading vae
+Loading t5
+You set `add_prefix_space`. The tokenizer needs to be converted from the slow tokenizers
+Downloading shards: 100%|████████████████████████████████████████████████████████| 2/2 [00:00<00:00, 1819.26it/s]
+Loading checkpoint shards: 100%|███████████████████████████████████████████████████| 2/2 [00:00<00:00,  4.67it/s]
+Quantizing T5
+Loading clip
+making pipe
+preparing
+Loading assistant lora
+Loading assistant adapter from /home/aladine/.cache/huggingface/hub/models--ostris--FLUX.1-schnell-training-adapter/snapshots/2715e8057d640acb4519b99f1d138ed3f1ac227c/pytorch_lora_weights.safetensors
+create LoRA network. base dim (rank): 42, alpha: 42
+neuron dropout: p=None, rank dropout: p=None, module dropout: p=None
+create LoRA for Text Encoder: 0 modules.
+create LoRA for U-Net: 494 modules.
+enable LoRA for U-Net
+Missing keys: []
+create LoRA network. base dim (rank): 32, alpha: 32
+neuron dropout: p=None, rank dropout: p=None, module dropout: p=None
+create LoRA for Text Encoder: 0 modules.
+create LoRA for U-Net: 494 modules.
+enable LoRA for U-Net
+#### IMPORTANT RESUMING FROM output/training_3/JLSCOM_garment_LoRA_flux_schnell/JLSCOM_garment_LoRA_flux_schnell_000000050.safetensors ####
+Loading from output/training_3/JLSCOM_garment_LoRA_flux_schnell/JLSCOM_garment_LoRA_flux_schnell_000000050.safetensors
+Missing keys: []
+Found step 50 in metadata, starting from there
+Loading optimizer state from output/training_3/JLSCOM_garment_LoRA_flux_schnell/optimizer.pt
+Updating optimizer LR from params
+Dataset: ../imgs
+  -  Preprocessing image dimensions
+100%|███████████████████████████████████████████████████████████████████████| 101/101 [00:00<00:00, 51529.58it/s]
+  -  Found 101 images
+Bucket sizes for ../imgs:
+512x512: 101 files
+1 buckets made
+Caching latents for ../imgs
+ - Saving latents to disk
+Caching latents to disk: 100%|███████████████████████████████████████████████| 101/101 [00:00<00:00, 5838.43it/s]
+Dataset: ../imgs
+  -  Preprocessing image dimensions
+100%|███████████████████████████████████████████████████████████████████████| 101/101 [00:00<00:00, 73943.92it/s]
+  -  Found 101 images
+Bucket sizes for ../imgs:
+512x512: 93 files
+768x768: 8 files
+2 buckets made
+Caching latents for ../imgs
+ - Saving latents to disk
+Caching latents to disk: 100%|███████████████████████████████████████████████| 101/101 [00:00<00:00, 6881.49it/s]
+Dataset: ../imgs
+  -  Preprocessing image dimensions
+100%|███████████████████████████████████████████████████████████████████████| 101/101 [00:00<00:00, 72155.46it/s]
+  -  Found 101 images
+Bucket sizes for ../imgs:
+512x512: 93 files
+1024x1024: 8 files
+2 buckets made
+Caching latents for ../imgs
+ - Saving latents to disk
+Caching latents to disk: 100%|███████████████████████████████████████████████| 101/101 [00:00<00:00, 6878.81it/s]
+Skipping first sample due to config setting
+JLSCOM_garment_LoRA_flux_schnell:   1%|        | 59/4000 [02:23<13:39:51, 12.48s/it, lr: 5.0e-06 loss: 1.326e-01]
+Timer 'JLSCOM_garment_LoRA_flux_schnell Timer':
+ - 12.4091s avg - train_loop, num = 10
+ - 7.4372s avg - backward, num = 10
+ - 3.9201s avg - predict_unet, num = 10
+ - 0.4606s avg - calculate_loss, num = 10
+ - 0.3351s avg - optimizer_step, num = 10
+ - 0.2163s avg - encode_prompt, num = 10
+ - 0.0020s avg - get_batch, num = 10
+ - 0.0019s avg - preprocess_batch, num = 10
+ - 0.0013s avg - prepare_noise, num = 10
+ - 0.0003s avg - prepare_latents, num = 10
+ - 0.0001s avg - batch_cleanup, num = 10
+ - 0.0001s avg - prepare_prompt, num = 10
+ - 0.0000s avg - scheduler_step, num = 10
+ - 0.0000s avg - grad_setup, num = 10
+
+JLSCOM_garment_LoRA_flux_schnell:   2%|▏       | 69/4000 [04:29<13:30:35, 12.37s/it, lr: 5.0e-06 loss: 1.523e-01]
+Timer 'JLSCOM_garment_LoRA_flux_schnell Timer':
+ - 12.5841s avg - train_loop, num = 10
+ - 7.5385s avg - backward, num = 10
+ - 3.9702s avg - predict_unet, num = 10
+ - 0.4767s avg - calculate_loss, num = 10
+ - 0.3376s avg - optimizer_step, num = 10
+ - 0.2208s avg - encode_prompt, num = 10
+ - 0.0022s avg - get_batch, num = 10
+ - 0.0018s avg - preprocess_batch, num = 10
+ - 0.0013s avg - prepare_noise, num = 10
+ - 0.0003s avg - prepare_latents, num = 10
+ - 0.0001s avg - batch_cleanup, num = 10
+ - 0.0000s avg - prepare_prompt, num = 10
+ - 0.0000s avg - scheduler_step, num = 10
+ - 0.0000s avg - grad_setup, num = 10
+
+JLSCOM_garment_LoRA_flux_schnell:   2%|▏       | 79/4000 [06:35<13:30:01, 12.40s/it, lr: 5.0e-06 loss: 1.994e-01]
+Timer 'JLSCOM_garment_LoRA_flux_schnell Timer':
+ - 12.6171s avg - train_loop, num = 10
+ - 7.5597s avg - backward, num = 10
+ - 3.9687s avg - predict_unet, num = 10
+ - 0.4888s avg - calculate_loss, num = 10
+ - 0.3388s avg - optimizer_step, num = 10
+ - 0.2203s avg - encode_prompt, num = 10
+ - 0.0023s avg - get_batch, num = 10
+ - 0.0018s avg - preprocess_batch, num = 10
+ - 0.0013s avg - prepare_noise, num = 10
+ - 0.0002s avg - prepare_latents, num = 10
+ - 0.0001s avg - batch_cleanup, num = 10
+ - 0.0001s avg - prepare_prompt, num = 10
+ - 0.0000s avg - scheduler_step, num = 10
+ - 0.0000s avg - grad_setup, num = 10
+
+JLSCOM_garment_LoRA_flux_schnell:   2%|▏       | 89/4000 [09:11<22:48:02, 20.99s/it, lr: 5.0e-06 loss: 1.518e-01]
+Timer 'JLSCOM_garment_LoRA_flux_schnell Timer':
+ - 15.5388s avg - train_loop, num = 10
+ - 9.4840s avg - backward, num = 10
+ - 4.7780s avg - predict_unet, num = 10
+ - 0.6166s avg - calculate_loss, num = 10
+ - 0.3940s avg - optimizer_step, num = 10
+ - 0.2199s avg - encode_prompt, num = 10
+ - 0.0023s avg - get_batch, num = 10
+ - 0.0019s avg - preprocess_batch, num = 10
+ - 0.0013s avg - prepare_noise, num = 10
+ - 0.0003s avg - prepare_latents, num = 10
+ - 0.0001s avg - batch_cleanup, num = 10
+ - 0.0000s avg - prepare_prompt, num = 10
+ - 0.0000s avg - scheduler_step, num = 10
+ - 0.0000s avg - grad_setup, num = 10
+
+JLSCOM_garment_LoRA_flux_schnell:   2%|▏       | 99/4000 [11:17<13:49:22, 12.76s/it, lr: 5.0e-06 loss: 2.048e-01]Unloading assistant lora
+                                                                                                                Loading assistant lora                                                                                            
+Saving at step 100                                                                                               
+Saved to output/training_3/JLSCOM_garment_LoRA_flux_schnell/optimizer.pt                                         
+JLSCOM_garment_LoRA_flux_schnell:   2%|▏       | 99/4000 [11:30<13:49:22, 12.76s/it, lr: 5.0e-06 loss: 2.048e-01]
+Timer 'JLSCOM_garment_LoRA_flux_schnell Timer':
+ - 12.6305s avg - train_loop, num = 10
+ - 7.5696s avg - backward, num = 10
+ - 3.9715s avg - predict_unet, num = 10
+ - 0.4894s avg - calculate_loss, num = 10
+ - 0.3396s avg - optimizer_step, num = 10
+ - 0.2199s avg - encode_prompt, num = 10
+ - 0.0022s avg - get_batch, num = 10
+ - 0.0018s avg - preprocess_batch, num = 10
+ - 0.0013s avg - prepare_noise, num = 10
+ - 0.0002s avg - prepare_latents, num = 10
+ - 0.0001s avg - batch_cleanup, num = 10
+ - 0.0000s avg - prepare_prompt, num = 10
+ - 0.0000s avg - scheduler_step, num = 10
+ - 0.0000s avg - grad_setup, num = 10
+ - 0.0000s avg - log_to_tensorboard, num = 1
+
+JLSCOM_garment_LoRA_flux_schnell:   3%|▏      | 109/4000 [13:22<13:21:39, 12.36s/it, lr: 5.0e-06 loss: 9.489e-02]
+Timer 'JLSCOM_garment_LoRA_flux_schnell Timer':
+ - 12.5313s avg - train_loop, num = 10
+ - 7.5247s avg - backward, num = 10
+ - 3.9643s avg - predict_unet, num = 10
+ - 0.4658s avg - calculate_loss, num = 10
+ - 0.3206s avg - optimizer_step, num = 10
+ - 0.2158s avg - encode_prompt, num = 10
+ - 0.0023s avg - get_batch, num = 10
+ - 0.0016s avg - preprocess_batch, num = 10
+ - 0.0011s avg - prepare_noise, num = 10
+ - 0.0002s avg - prepare_latents, num = 10
+ - 0.0001s avg - batch_cleanup, num = 10
+ - 0.0000s avg - prepare_prompt, num = 10
+ - 0.0000s avg - scheduler_step, num = 10
+ - 0.0000s avg - grad_setup, num = 10
+
+JLSCOM_garment_LoRA_flux_schnell:   3%|▏      | 119/4000 [15:39<14:10:14, 13.14s/it, lr: 5.0e-06 loss: 1.149e-01]
+Timer 'JLSCOM_garment_LoRA_flux_schnell Timer':
+ - 13.6781s avg - train_loop, num = 10
+ - 8.2759s avg - backward, num = 10
+ - 4.2796s avg - predict_unet, num = 10
+ - 0.5250s avg - calculate_loss, num = 10
+ - 0.3414s avg - optimizer_step, num = 10
+ - 0.2135s avg - encode_prompt, num = 10
+ - 0.0024s avg - get_batch, num = 10
+ - 0.0016s avg - preprocess_batch, num = 10
+ - 0.0011s avg - prepare_noise, num = 10
+ - 0.0002s avg - prepare_latents, num = 10
+ - 0.0001s avg - batch_cleanup, num = 10
+ - 0.0000s avg - prepare_prompt, num = 10
+ - 0.0000s avg - scheduler_step, num = 10
+ - 0.0000s avg - grad_setup, num = 10
+
+JLSCOM_garment_LoRA_flux_schnell:   3%|▏      | 129/4000 [18:25<17:15:02, 16.04s/it, lr: 5.0e-06 loss: 1.899e-01]
+Timer 'JLSCOM_garment_LoRA_flux_schnell Timer':
+ - 16.6110s avg - train_loop, num = 10
+ - 10.1929s avg - backward, num = 10
+ - 5.0757s avg - predict_unet, num = 10
+ - 0.6649s avg - calculate_loss, num = 10
+ - 0.4098s avg - optimizer_step, num = 10
+ - 0.2187s avg - encode_prompt, num = 10
+ - 0.0026s avg - get_batch, num = 10
+ - 0.0018s avg - preprocess_batch, num = 10
+ - 0.0013s avg - prepare_noise, num = 10
+ - 0.0003s avg - prepare_latents, num = 10
+ - 0.0001s avg - batch_cleanup, num = 10
+ - 0.0000s avg - prepare_prompt, num = 10
+ - 0.0000s avg - scheduler_step, num = 10
+ - 0.0000s avg - grad_setup, num = 10
+
+JLSCOM_garment_LoRA_flux_schnell:   3%|▏      | 139/4000 [20:32<13:27:31, 12.55s/it, lr: 5.0e-06 loss: 1.355e-01]
+Timer 'JLSCOM_garment_LoRA_flux_schnell Timer':
+ - 12.6301s avg - train_loop, num = 10
+ - 7.5705s avg - backward, num = 10
+ - 3.9722s avg - predict_unet, num = 10
+ - 0.4893s avg - calculate_loss, num = 10
+ - 0.3393s avg - optimizer_step, num = 10
+ - 0.2182s avg - encode_prompt, num = 10
+ - 0.0023s avg - get_batch, num = 10
+ - 0.0018s avg - preprocess_batch, num = 10
+ - 0.0013s avg - prepare_noise, num = 10
+ - 0.0002s avg - prepare_latents, num = 10
+ - 0.0001s avg - batch_cleanup, num = 10
+ - 0.0000s avg - prepare_prompt, num = 10
+ - 0.0000s avg - scheduler_step, num = 10
+ - 0.0000s avg - grad_setup, num = 10
+
+JLSCOM_garment_LoRA_flux_schnell:   4%|▎      | 149/4000 [23:07<19:42:18, 18.42s/it, lr: 5.0e-06 loss: 9.884e-02]Unloading assistant lora
+                                                                                                                Loading assistant lora                                                                                            
+Saving at step 150                                                                                               
+Saved to output/training_3/JLSCOM_garment_LoRA_flux_schnell/optimizer.pt                                         
+JLSCOM_garment_LoRA_flux_schnell:   4%|▎      | 149/4000 [23:20<19:42:18, 18.42s/it, lr: 5.0e-06 loss: 9.884e-02]
+Timer 'JLSCOM_garment_LoRA_flux_schnell Timer':
+ - 15.5404s avg - train_loop, num = 10
+ - 9.4873s avg - backward, num = 10
+ - 4.7793s avg - predict_unet, num = 10
+ - 0.6161s avg - calculate_loss, num = 10
+ - 0.3930s avg - optimizer_step, num = 10
+ - 0.2180s avg - encode_prompt, num = 10
+ - 0.0022s avg - get_batch, num = 10
+ - 0.0018s avg - preprocess_batch, num = 10
+ - 0.0013s avg - prepare_noise, num = 10
+ - 0.0003s avg - prepare_latents, num = 10
+ - 0.0001s avg - batch_cleanup, num = 10
+ - 0.0000s avg - prepare_prompt, num = 10
+ - 0.0000s avg - scheduler_step, num = 10
+ - 0.0000s avg - grad_setup, num = 10
+
+JLSCOM_garment_LoRA_flux_schnell:   4%|▎      | 159/4000 [25:12<13:27:01, 12.61s/it, lr: 5.0e-06 loss: 1.264e-01]
+Timer 'JLSCOM_garment_LoRA_flux_schnell Timer':
+ - 12.5446s avg - train_loop, num = 10
+ - 7.5361s avg - backward, num = 10
+ - 3.9657s avg - predict_unet, num = 10
+ - 0.4684s avg - calculate_loss, num = 10
+ - 0.3203s avg - optimizer_step, num = 10
+ - 0.2143s avg - encode_prompt, num = 10
+ - 0.0022s avg - get_batch, num = 10
+ - 0.0015s avg - preprocess_batch, num = 10
+ - 0.0010s avg - prepare_noise, num = 10
+ - 0.0002s avg - prepare_latents, num = 10
+ - 0.0001s avg - batch_cleanup, num = 10
+ - 0.0000s avg - prepare_prompt, num = 10
+ - 0.0000s avg - scheduler_step, num = 10
+ - 0.0000s avg - grad_setup, num = 10
+
+JLSCOM_garment_LoRA_flux_schnell:   4%|▎      | 169/4000 [27:29<13:29:03, 12.67s/it, lr: 5.0e-06 loss: 1.433e-01]
+Timer 'JLSCOM_garment_LoRA_flux_schnell Timer':
+ - 13.6907s avg - train_loop, num = 10
+ - 8.2826s avg - backward, num = 10
+ - 4.2839s avg - predict_unet, num = 10
+ - 0.5251s avg - calculate_loss, num = 10
+ - 0.3417s avg - optimizer_step, num = 10
+ - 0.2145s avg - encode_prompt, num = 10
+ - 0.0023s avg - get_batch, num = 10
+ - 0.0015s avg - preprocess_batch, num = 10
+ - 0.0011s avg - prepare_noise, num = 10
+ - 0.0002s avg - prepare_latents, num = 10
+ - 0.0001s avg - batch_cleanup, num = 10
+ - 0.0000s avg - prepare_prompt, num = 10
+ - 0.0000s avg - scheduler_step, num = 10
+ - 0.0000s avg - grad_setup, num = 10
+
+JLSCOM_garment_LoRA_flux_schnell:   4%|▎      | 179/4000 [30:08<13:45:13, 12.96s/it, lr: 5.0e-06 loss: 2.035e-01]
+Timer 'JLSCOM_garment_LoRA_flux_schnell Timer':
+ - 15.8172s avg - train_loop, num = 10
+ - 9.6862s avg - backward, num = 10
+ - 4.8610s avg - predict_unet, num = 10
+ - 0.6284s avg - calculate_loss, num = 10
+ - 0.3814s avg - optimizer_step, num = 10
+ - 0.2119s avg - encode_prompt, num = 10
+ - 0.0024s avg - get_batch, num = 10
+ - 0.0015s avg - preprocess_batch, num = 10
+ - 0.0011s avg - prepare_noise, num = 10
+ - 0.0003s avg - prepare_latents, num = 10
+ - 0.0001s avg - batch_cleanup, num = 10
+ - 0.0000s avg - prepare_prompt, num = 10
+ - 0.0000s avg - scheduler_step, num = 10
+ - 0.0000s avg - grad_setup, num = 10
+
+JLSCOM_garment_LoRA_flux_schnell:   5%|▎      | 189/4000 [32:43<14:40:59, 13.87s/it, lr: 5.0e-06 loss: 1.534e-01]
+Timer 'JLSCOM_garment_LoRA_flux_schnell Timer':
+ - 15.5406s avg - train_loop, num = 10
+ - 9.4976s avg - backward, num = 10
+ - 4.7846s avg - predict_unet, num = 10
+ - 0.6178s avg - calculate_loss, num = 10
+ - 0.3770s avg - optimizer_step, num = 10
+ - 0.2166s avg - encode_prompt, num = 10
+ - 0.0027s avg - get_batch, num = 10
+ - 0.0017s avg - preprocess_batch, num = 10
+ - 0.0012s avg - prepare_noise, num = 10
+ - 0.0003s avg - prepare_latents, num = 10
+ - 0.0001s avg - batch_cleanup, num = 10
+ - 0.0000s avg - prepare_prompt, num = 10
+ - 0.0000s avg - scheduler_step, num = 10
+ - 0.0000s avg - grad_setup, num = 10
+
+JLSCOM_garment_LoRA_flux_schnell:   5%|▎      | 199/4000 [35:29<24:30:43, 23.22s/it, lr: 5.0e-06 loss: 1.377e-01]Unloading assistant lora
+                                                                                                                Loading assistant lora                                                                                            
+Saving at step 200                                                                                               
+Saved to output/training_3/JLSCOM_garment_LoRA_flux_schnell/optimizer.pt                                         
+JLSCOM_garment_LoRA_flux_schnell:   5%|▎      | 199/4000 [35:40<24:30:43, 23.22s/it, lr: 5.0e-06 loss: 1.377e-01]
+Timer 'JLSCOM_garment_LoRA_flux_schnell Timer':
+ - 16.5816s avg - train_loop, num = 10
+ - 10.1863s avg - backward, num = 10
+ - 5.0746s avg - predict_unet, num = 10
+ - 0.6623s avg - calculate_loss, num = 10
+ - 0.3952s avg - optimizer_step, num = 10
+ - 0.2141s avg - encode_prompt, num = 10
+ - 0.0023s avg - get_batch, num = 10
+ - 0.0015s avg - preprocess_batch, num = 10
+ - 0.0011s avg - prepare_noise, num = 10
+ - 0.0003s avg - prepare_latents, num = 10
+ - 0.0001s avg - batch_cleanup, num = 10
+ - 0.0000s avg - prepare_prompt, num = 10
+ - 0.0000s avg - scheduler_step, num = 10
+ - 0.0000s avg - grad_setup, num = 10
+ - 0.0000s avg - log_to_tensorboard, num = 1
+
+JLSCOM_garment_LoRA_flux_schnell:   5%|▎      | 209/4000 [37:34<13:28:15, 12.79s/it, lr: 5.0e-06 loss: 1.552e-01]
+Timer 'JLSCOM_garment_LoRA_flux_schnell Timer':
+ - 12.5407s avg - train_loop, num = 10
+ - 7.5311s avg - backward, num = 10
+ - 3.9662s avg - predict_unet, num = 10
+ - 0.4686s avg - calculate_loss, num = 10
+ - 0.3206s avg - optimizer_step, num = 10
+ - 0.2145s avg - encode_prompt, num = 10
+ - 0.0022s avg - get_batch, num = 10
+ - 0.0015s avg - preprocess_batch, num = 10
+ - 0.0010s avg - prepare_noise, num = 10
+ - 0.0002s avg - prepare_latents, num = 10
+ - 0.0001s avg - batch_cleanup, num = 10
+ - 0.0000s avg - prepare_prompt, num = 10
+ - 0.0000s avg - scheduler_step, num = 10
+ - 0.0000s avg - grad_setup, num = 10
+
+JLSCOM_garment_LoRA_flux_schnell:   5%|▍      | 219/4000 [39:40<13:01:37, 12.40s/it, lr: 5.0e-06 loss: 2.388e-01]
+Timer 'JLSCOM_garment_LoRA_flux_schnell Timer':
+ - 12.6127s avg - train_loop, num = 10
+ - 7.5723s avg - backward, num = 10
+ - 3.9857s avg - predict_unet, num = 10
+ - 0.4798s avg - calculate_loss, num = 10
+ - 0.3216s avg - optimizer_step, num = 10
+ - 0.2135s avg - encode_prompt, num = 10
+ - 0.0022s avg - get_batch, num = 10
+ - 0.0015s avg - preprocess_batch, num = 10
+ - 0.0010s avg - prepare_noise, num = 10
+ - 0.0002s avg - prepare_latents, num = 10
+ - 0.0001s avg - batch_cleanup, num = 10
+ - 0.0000s avg - prepare_prompt, num = 10
+ - 0.0000s avg - scheduler_step, num = 10
+ - 0.0000s avg - grad_setup, num = 10
+
+JLSCOM_garment_LoRA_flux_schnell:   6%|▍      | 229/4000 [41:46<12:58:43, 12.39s/it, lr: 5.0e-06 loss: 1.771e-01]
+Timer 'JLSCOM_garment_LoRA_flux_schnell Timer':
+ - 12.6135s avg - train_loop, num = 10
+ - 7.5723s avg - backward, num = 10
+ - 3.9758s avg - predict_unet, num = 10
+ - 0.4904s avg - calculate_loss, num = 10
+ - 0.3210s avg - optimizer_step, num = 10
+ - 0.2137s avg - encode_prompt, num = 10
+ - 0.0022s avg - get_batch, num = 10
+ - 0.0015s avg - preprocess_batch, num = 10
+ - 0.0010s avg - prepare_noise, num = 10
+ - 0.0002s avg - prepare_latents, num = 10
+ - 0.0001s avg - batch_cleanup, num = 10
+ - 0.0000s avg - prepare_prompt, num = 10
+ - 0.0000s avg - grad_setup, num = 10
+ - 0.0000s avg - scheduler_step, num = 10
+
+JLSCOM_garment_LoRA_flux_schnell:   6%|▍      | 239/4000 [44:22<13:40:57, 13.10s/it, lr: 5.0e-06 loss: 1.404e-01]
+Timer 'JLSCOM_garment_LoRA_flux_schnell Timer':
+ - 15.5239s avg - train_loop, num = 10
+ - 9.4900s avg - backward, num = 10
+ - 4.7835s avg - predict_unet, num = 10
+ - 0.6164s avg - calculate_loss, num = 10
+ - 0.3749s avg - optimizer_step, num = 10
+ - 0.2131s avg - encode_prompt, num = 10
+ - 0.0022s avg - get_batch, num = 10
+ - 0.0015s avg - preprocess_batch, num = 10
+ - 0.0010s avg - prepare_noise, num = 10
+ - 0.0002s avg - prepare_latents, num = 10
+ - 0.0001s avg - batch_cleanup, num = 10
+ - 0.0000s avg - prepare_prompt, num = 10
+ - 0.0000s avg - grad_setup, num = 10
+ - 0.0000s avg - scheduler_step, num = 10
+
+JLSCOM_garment_LoRA_flux_schnell:   6%|▍      | 249/4000 [46:57<13:59:18, 13.43s/it, lr: 5.0e-06 loss: 9.486e-02]Unloading assistant lora
+
+Generating Images:  10%|█████▊                                                    | 1/10 [00:58<08:45, 58.40s/it]
+
+JLSCOM_garment_LoRA_flux_schnell:   6%|▍      | 249/4000 [46:57<13:59:18, 13.43s/it, lr: 5.0e-06 loss: 9.486e-02]Unloading assistant lora
+                                                                                                                Loading assistant lora                                                                                            
+Saving at step 250                                                                                               
+Saved to output/training_3/JLSCOM_garment_LoRA_flux_schnell/optimizer.pt                                         
+JLSCOM_garment_LoRA_flux_schnell:   6%|▍      | 249/4000 [47:17<13:59:18, 13.43s/it, lr: 5.0e-06 loss: 9.486e-02]
+Timer 'JLSCOM_garment_LoRA_flux_schnell Timer':
+ - 15.5294s avg - train_loop, num = 10
+ - 9.4912s avg - backward, num = 10
+ - 4.7841s avg - predict_unet, num = 10
+ - 0.6181s avg - calculate_loss, num = 10
+ - 0.3767s avg - optimizer_step, num = 10
+ - 0.2134s avg - encode_prompt, num = 10
+ - 0.0022s avg - get_batch, num = 10
+ - 0.0015s avg - preprocess_batch, num = 10
+ - 0.0010s avg - prepare_noise, num = 10
+ - 0.0002s avg - prepare_latents, num = 10
+ - 0.0001s avg - batch_cleanup, num = 10
+ - 0.0000s avg - prepare_prompt, num = 10
+ - 0.0000s avg - scheduler_step, num = 10
+ - 0.0000s avg - grad_setup, num = 10
+
+JLSCOM_garment_LoRA_flux_schnell:   6%|▍      | 259/4000 [49:32<19:09:22, 18.43s/it, lr: 5.0e-06 loss: 1.337e-01]
+Timer 'JLSCOM_garment_LoRA_flux_schnell Timer':
+ - 15.4516s avg - train_loop, num = 10
+ - 9.4510s avg - backward, num = 10
+ - 4.7729s avg - predict_unet, num = 10
+ - 0.5942s avg - calculate_loss, num = 10
+ - 0.3744s avg - optimizer_step, num = 10
+ - 0.2130s avg - encode_prompt, num = 10
+ - 0.0022s avg - get_batch, num = 10
+ - 0.0015s avg - preprocess_batch, num = 10
+ - 0.0010s avg - prepare_noise, num = 10
+ - 0.0002s avg - prepare_latents, num = 10
+ - 0.0001s avg - batch_cleanup, num = 10
+ - 0.0000s avg - prepare_prompt, num = 10
+ - 0.0000s avg - scheduler_step, num = 10
+ - 0.0000s avg - grad_setup, num = 10
+
+JLSCOM_garment_LoRA_flux_schnell:   7%|▍      | 269/4000 [51:38<13:05:47, 12.64s/it, lr: 5.0e-06 loss: 1.279e-01]
+Timer 'JLSCOM_garment_LoRA_flux_schnell Timer':
+ - 12.6216s avg - train_loop, num = 10
+ - 7.5790s avg - backward, num = 10
+ - 3.9880s avg - predict_unet, num = 10
+ - 0.4794s avg - calculate_loss, num = 10
+ - 0.3225s avg - optimizer_step, num = 10
+ - 0.2132s avg - encode_prompt, num = 10
+ - 0.0022s avg - get_batch, num = 10
+ - 0.0015s avg - preprocess_batch, num = 10
+ - 0.0010s avg - prepare_noise, num = 10
+ - 0.0002s avg - prepare_latents, num = 10
+ - 0.0001s avg - batch_cleanup, num = 10
+ - 0.0000s avg - prepare_prompt, num = 10
+ - 0.0000s avg - scheduler_step, num = 10
+ - 0.0000s avg - grad_setup, num = 10
+
+JLSCOM_garment_LoRA_flux_schnell:   7%|▍      | 279/4000 [53:44<12:48:58, 12.40s/it, lr: 5.0e-06 loss: 9.758e-02]
+Timer 'JLSCOM_garment_LoRA_flux_schnell Timer':
+ - 12.6114s avg - train_loop, num = 10
+ - 7.5723s avg - backward, num = 10
+ - 3.9731s avg - predict_unet, num = 10
+ - 0.4905s avg - calculate_loss, num = 10
+ - 0.3214s avg - optimizer_step, num = 10
+ - 0.2135s avg - encode_prompt, num = 10
+ - 0.0022s avg - get_batch, num = 10
+ - 0.0015s avg - preprocess_batch, num = 10
+ - 0.0010s avg - prepare_noise, num = 10
+ - 0.0002s avg - prepare_latents, num = 10
+ - 0.0001s avg - batch_cleanup, num = 10
+ - 0.0000s avg - prepare_prompt, num = 10
+ - 0.0000s avg - scheduler_step, num = 10
+ - 0.0000s avg - grad_setup, num = 10
+
+JLSCOM_garment_LoRA_flux_schnell:   7%|▌      | 289/4000 [55:50<12:46:06, 12.39s/it, lr: 5.0e-06 loss: 1.440e-01]
+Timer 'JLSCOM_garment_LoRA_flux_schnell Timer':
+ - 12.6069s avg - train_loop, num = 10
+ - 7.5701s avg - backward, num = 10
+ - 3.9729s avg - predict_unet, num = 10
+ - 0.4896s avg - calculate_loss, num = 10
+ - 0.3210s avg - optimizer_step, num = 10
+ - 0.2131s avg - encode_prompt, num = 10
+ - 0.0022s avg - get_batch, num = 10
+ - 0.0015s avg - preprocess_batch, num = 10
+ - 0.0010s avg - prepare_noise, num = 10
+ - 0.0002s avg - prepare_latents, num = 10
+ - 0.0001s avg - batch_cleanup, num = 10
+ - 0.0000s avg - prepare_prompt, num = 10
+ - 0.0000s avg - scheduler_step, num = 10
+ - 0.0000s avg - grad_setup, num = 10
+
+JLSCOM_garment_LoRA_flux_schnell:   7%|▌      | 299/4000 [57:56<12:43:39, 12.38s/it, lr: 5.0e-06 loss: 1.647e-01]Unloading assistant lora
+                                                                                                                Loading assistant lora                                                                                            
+Saving at step 300                                                                                               
+Saved to output/training_3/JLSCOM_garment_LoRA_flux_schnell/optimizer.pt                                         
+JLSCOM_garment_LoRA_flux_schnell:   7%|▌      | 299/4000 [58:08<12:43:39, 12.38s/it, lr: 5.0e-06 loss: 1.647e-01]
+Timer 'JLSCOM_garment_LoRA_flux_schnell Timer':
+ - 12.6018s avg - train_loop, num = 10
+ - 7.5695s avg - backward, num = 10
+ - 3.9688s avg - predict_unet, num = 10
+ - 0.4896s avg - calculate_loss, num = 10
+ - 0.3214s avg - optimizer_step, num = 10
+ - 0.2121s avg - encode_prompt, num = 10
+ - 0.0022s avg - get_batch, num = 10
+ - 0.0015s avg - preprocess_batch, num = 10
+ - 0.0010s avg - prepare_noise, num = 10
+ - 0.0002s avg - prepare_latents, num = 10
+ - 0.0001s avg - batch_cleanup, num = 10
+ - 0.0000s avg - prepare_prompt, num = 10
+ - 0.0000s avg - scheduler_step, num = 10
+ - 0.0000s avg - grad_setup, num = 10
+ - 0.0000s avg - log_to_tensorboard, num = 1
+
+JLSCOM_garment_LoRA_flux_schnell:   8%|▍    | 309/4000 [1:00:12<13:47:05, 13.45s/it, lr: 5.0e-06 loss: 1.822e-01]
+Timer 'JLSCOM_garment_LoRA_flux_schnell Timer':
+ - 13.6147s avg - train_loop, num = 10
+ - 8.2393s avg - backward, num = 10
+ - 4.2630s avg - predict_unet, num = 10
+ - 0.5137s avg - calculate_loss, num = 10
+ - 0.3408s avg - optimizer_step, num = 10
+ - 0.2143s avg - encode_prompt, num = 10
+ - 0.0024s avg - get_batch, num = 10
+ - 0.0016s avg - preprocess_batch, num = 10
+ - 0.0011s avg - prepare_noise, num = 10
+ - 0.0003s avg - prepare_latents, num = 10
+ - 0.0001s avg - batch_cleanup, num = 10
+ - 0.0000s avg - prepare_prompt, num = 10
+ - 0.0000s avg - scheduler_step, num = 10
+ - 0.0000s avg - grad_setup, num = 10
+
+JLSCOM_garment_LoRA_flux_schnell:   8%|▍    | 319/4000 [1:02:18<12:43:43, 12.45s/it, lr: 5.0e-06 loss: 1.424e-01]
+Timer 'JLSCOM_garment_LoRA_flux_schnell Timer':
+ - 12.6270s avg - train_loop, num = 10
+ - 7.5788s avg - backward, num = 10
+ - 3.9908s avg - predict_unet, num = 10
+ - 0.4787s avg - calculate_loss, num = 10
+ - 0.3231s avg - optimizer_step, num = 10
+ - 0.2144s avg - encode_prompt, num = 10
+ - 0.0026s avg - get_batch, num = 10
+ - 0.0017s avg - preprocess_batch, num = 10
+ - 0.0012s avg - prepare_noise, num = 10
+ - 0.0003s avg - prepare_latents, num = 10
+ - 0.0001s avg - batch_cleanup, num = 10
+ - 0.0000s avg - prepare_prompt, num = 10
+ - 0.0000s avg - scheduler_step, num = 10
+ - 0.0000s avg - grad_setup, num = 10
+
+JLSCOM_garment_LoRA_flux_schnell:   8%|▍    | 329/4000 [1:04:25<12:38:24, 12.40s/it, lr: 5.0e-06 loss: 1.500e-01]
+Timer 'JLSCOM_garment_LoRA_flux_schnell Timer':
+ - 12.6155s avg - train_loop, num = 10
+ - 7.5737s avg - backward, num = 10
+ - 3.9755s avg - predict_unet, num = 10
+ - 0.4898s avg - calculate_loss, num = 10
+ - 0.3233s avg - optimizer_step, num = 10
+ - 0.2130s avg - encode_prompt, num = 10
+ - 0.0023s avg - get_batch, num = 10
+ - 0.0015s avg - preprocess_batch, num = 10
+ - 0.0011s avg - prepare_noise, num = 10
+ - 0.0002s avg - prepare_latents, num = 10
+ - 0.0001s avg - batch_cleanup, num = 10
+ - 0.0000s avg - prepare_prompt, num = 10
+ - 0.0000s avg - scheduler_step, num = 10
+ - 0.0000s avg - grad_setup, num = 10
+
+JLSCOM_garment_LoRA_flux_schnell:   8%|▍    | 339/4000 [1:06:31<12:35:47, 12.39s/it, lr: 5.0e-06 loss: 1.213e-01]
+Timer 'JLSCOM_garment_LoRA_flux_schnell Timer':
+ - 12.6095s avg - train_loop, num = 10
+ - 7.5704s avg - backward, num = 10
+ - 3.9737s avg - predict_unet, num = 10
+ - 0.4901s avg - calculate_loss, num = 10
+ - 0.3223s avg - optimizer_step, num = 10
+ - 0.2134s avg - encode_prompt, num = 10
+ - 0.0022s avg - get_batch, num = 10
+ - 0.0015s avg - preprocess_batch, num = 10
+ - 0.0010s avg - prepare_noise, num = 10
+ - 0.0002s avg - prepare_latents, num = 10
+ - 0.0001s avg - batch_cleanup, num = 10
+ - 0.0000s avg - prepare_prompt, num = 10
+ - 0.0000s avg - scheduler_step, num = 10
+ - 0.0000s avg - grad_setup, num = 10
+
+JLSCOM_garment_LoRA_flux_schnell:   9%|▍    | 349/4000 [1:08:37<12:33:23, 12.38s/it, lr: 5.0e-06 loss: 1.315e-01]Unloading assistant lora
+                                                                                                                Loading assistant lora                                                                                            
+Saving at step 350                                                                                               
+Saved to output/training_3/JLSCOM_garment_LoRA_flux_schnell/optimizer.pt                                         
+JLSCOM_garment_LoRA_flux_schnell:   9%|▍    | 349/4000 [1:08:49<12:33:23, 12.38s/it, lr: 5.0e-06 loss: 1.315e-01]
+Timer 'JLSCOM_garment_LoRA_flux_schnell Timer':
+ - 12.6043s avg - train_loop, num = 10
+ - 7.5660s avg - backward, num = 10
+ - 3.9726s avg - predict_unet, num = 10
+ - 0.4900s avg - calculate_loss, num = 10
+ - 0.3222s avg - optimizer_step, num = 10
+ - 0.2139s avg - encode_prompt, num = 10
+ - 0.0022s avg - get_batch, num = 10
+ - 0.0015s avg - preprocess_batch, num = 10
+ - 0.0010s avg - prepare_noise, num = 10
+ - 0.0002s avg - prepare_latents, num = 10
+ - 0.0001s avg - batch_cleanup, num = 10
+ - 0.0000s avg - prepare_prompt, num = 10
+ - 0.0000s avg - scheduler_step, num = 10
+ - 0.0000s avg - grad_setup, num = 10
+
+JLSCOM_garment_LoRA_flux_schnell:   9%|▍    | 359/4000 [1:10:43<12:29:41, 12.35s/it, lr: 5.0e-06 loss: 9.412e-02]
+Timer 'JLSCOM_garment_LoRA_flux_schnell Timer':
+ - 12.6321s avg - train_loop, num = 10
+ - 7.5293s avg - backward, num = 10
+ - 3.9728s avg - predict_unet, num = 10
+ - 0.4602s avg - calculate_loss, num = 10
+ - 0.3216s avg - optimizer_step, num = 10
+ - 0.2171s avg - encode_prompt, num = 10
+ - 0.4491s avg - reset_batch, num = 1
+ - 0.0096s avg - get_batch, num = 10
+ - 0.0020s avg - preprocess_batch, num = 10
+ - 0.0013s avg - prepare_noise, num = 10
+ - 0.0003s avg - prepare_latents, num = 10
+ - 0.0001s avg - prepare_prompt, num = 10
+ - 0.0001s avg - batch_cleanup, num = 10
+ - 0.0000s avg - grad_setup, num = 10
+ - 0.0000s avg - scheduler_step, num = 10
+
+JLSCOM_garment_LoRA_flux_schnell:   9%|▍    | 369/4000 [1:12:49<12:30:18, 12.40s/it, lr: 5.0e-06 loss: 1.186e-01]
+Timer 'JLSCOM_garment_LoRA_flux_schnell Timer':
+ - 12.6237s avg - train_loop, num = 10
+ - 7.5781s avg - backward, num = 10
+ - 3.9892s avg - predict_unet, num = 10
+ - 0.4793s avg - calculate_loss, num = 10
+ - 0.3231s avg - optimizer_step, num = 10
+ - 0.2137s avg - encode_prompt, num = 10
+ - 0.0022s avg - get_batch, num = 10
+ - 0.0015s avg - preprocess_batch, num = 10
+ - 0.0010s avg - prepare_noise, num = 10
+ - 0.0002s avg - prepare_latents, num = 10
+ - 0.0001s avg - batch_cleanup, num = 10
+ - 0.0000s avg - prepare_prompt, num = 10
+ - 0.0000s avg - scheduler_step, num = 10
+ - 0.0000s avg - grad_setup, num = 10
+
+JLSCOM_garment_LoRA_flux_schnell:   9%|▍    | 379/4000 [1:15:16<14:41:13, 14.60s/it, lr: 5.0e-06 loss: 1.534e-01]
+Timer 'JLSCOM_garment_LoRA_flux_schnell Timer':
+ - 14.7573s avg - train_loop, num = 10
+ - 8.9831s avg - backward, num = 10
+ - 4.5695s avg - predict_unet, num = 10
+ - 0.5824s avg - calculate_loss, num = 10
+ - 0.3622s avg - optimizer_step, num = 10
+ - 0.2141s avg - encode_prompt, num = 10
+ - 0.0022s avg - get_batch, num = 10
+ - 0.0015s avg - preprocess_batch, num = 10
+ - 0.0010s avg - prepare_noise, num = 10
+ - 0.0002s avg - prepare_latents, num = 10
+ - 0.0001s avg - batch_cleanup, num = 10
+ - 0.0000s avg - prepare_prompt, num = 10
+ - 0.0000s avg - scheduler_step, num = 10
+ - 0.0000s avg - grad_setup, num = 10
+
+JLSCOM_garment_LoRA_flux_schnell:  10%|▍    | 389/4000 [1:17:52<13:58:30, 13.93s/it, lr: 5.0e-06 loss: 1.798e-01]
+Timer 'JLSCOM_garment_LoRA_flux_schnell Timer':
+ - 15.5384s avg - train_loop, num = 10
+ - 9.4972s avg - backward, num = 10
+ - 4.7857s avg - predict_unet, num = 10
+ - 0.6184s avg - calculate_loss, num = 10
+ - 0.3767s avg - optimizer_step, num = 10
+ - 0.2144s avg - encode_prompt, num = 10
+ - 0.0022s avg - get_batch, num = 10
+ - 0.0015s avg - preprocess_batch, num = 10
+ - 0.0010s avg - prepare_noise, num = 10
+ - 0.0002s avg - prepare_latents, num = 10
+ - 0.0001s avg - batch_cleanup, num = 10
+ - 0.0000s avg - prepare_prompt, num = 10
+ - 0.0000s avg - scheduler_step, num = 10
+ - 0.0000s avg - grad_setup, num = 10
+
+JLSCOM_garment_LoRA_flux_schnell:  10%|▍    | 399/4000 [1:20:38<13:41:36, 13.69s/it, lr: 5.0e-06 loss: 1.805e-01]Unloading assistant lora
+                                                                                                                Loading assistant lora                                                                                            
+Saving at step 400                                                                                               
+Saved to output/training_3/JLSCOM_garment_LoRA_flux_schnell/optimizer.pt                                         
+JLSCOM_garment_LoRA_flux_schnell:  10%|▍    | 399/4000 [1:20:51<13:41:36, 13.69s/it, lr: 5.0e-06 loss: 1.805e-01]
+Timer 'JLSCOM_garment_LoRA_flux_schnell Timer':
+ - 16.5975s avg - train_loop, num = 10
+ - 10.1950s avg - backward, num = 10
+ - 5.0807s avg - predict_unet, num = 10
+ - 0.6633s avg - calculate_loss, num = 10
+ - 0.3958s avg - optimizer_step, num = 10
+ - 0.2142s avg - encode_prompt, num = 10
+ - 0.0022s avg - get_batch, num = 10
+ - 0.0015s avg - preprocess_batch, num = 10
+ - 0.0010s avg - prepare_noise, num = 10
+ - 0.0003s avg - prepare_latents, num = 10
+ - 0.0001s avg - batch_cleanup, num = 10
+ - 0.0000s avg - prepare_prompt, num = 10
+ - 0.0000s avg - scheduler_step, num = 10
+ - 0.0000s avg - grad_setup, num = 10
+ - 0.0000s avg - log_to_tensorboard, num = 1
+
+JLSCOM_garment_LoRA_flux_schnell:  10%|▌    | 409/4000 [1:23:12<12:22:27, 12.41s/it, lr: 5.0e-06 loss: 1.792e-01]
+Timer 'JLSCOM_garment_LoRA_flux_schnell Timer':
+ - 15.4479s avg - train_loop, num = 10
+ - 9.4455s avg - backward, num = 10
+ - 4.7707s avg - predict_unet, num = 10
+ - 0.5951s avg - calculate_loss, num = 10
+ - 0.3749s avg - optimizer_step, num = 10
+ - 0.2154s avg - encode_prompt, num = 10
+ - 0.0021s avg - get_batch, num = 10
+ - 0.0015s avg - preprocess_batch, num = 10
+ - 0.0010s avg - prepare_noise, num = 10
+ - 0.0002s avg - prepare_latents, num = 10
+ - 0.0001s avg - batch_cleanup, num = 10
+ - 0.0000s avg - prepare_prompt, num = 10
+ - 0.0000s avg - scheduler_step, num = 10
+ - 0.0000s avg - grad_setup, num = 10
+
+JLSCOM_garment_LoRA_flux_schnell:  10%|▌    | 419/4000 [1:25:18<12:19:51, 12.40s/it, lr: 5.0e-06 loss: 7.975e-02]
+Timer 'JLSCOM_garment_LoRA_flux_schnell Timer':
+ - 12.6196s avg - train_loop, num = 10
+ - 7.5769s avg - backward, num = 10
+ - 3.9851s avg - predict_unet, num = 10
+ - 0.4817s avg - calculate_loss, num = 10
+ - 0.3224s avg - optimizer_step, num = 10
+ - 0.2135s avg - encode_prompt, num = 10
+ - 0.0022s avg - get_batch, num = 10
+ - 0.0014s avg - preprocess_batch, num = 10
+ - 0.0010s avg - prepare_noise, num = 10
+ - 0.0002s avg - prepare_latents, num = 10
+ - 0.0001s avg - batch_cleanup, num = 10
+ - 0.0000s avg - prepare_prompt, num = 10
+ - 0.0000s avg - scheduler_step, num = 10
+ - 0.0000s avg - grad_setup, num = 10
+
+JLSCOM_garment_LoRA_flux_schnell:  11%|▌    | 429/4000 [1:27:25<12:17:23, 12.39s/it, lr: 5.0e-06 loss: 8.586e-02]
+Timer 'JLSCOM_garment_LoRA_flux_schnell Timer':
+ - 12.6126s avg - train_loop, num = 10
+ - 7.5706s avg - backward, num = 10
+ - 3.9746s avg - predict_unet, num = 10
+ - 0.4906s avg - calculate_loss, num = 10
+ - 0.3222s avg - optimizer_step, num = 10
+ - 0.2146s avg - encode_prompt, num = 10
+ - 0.0021s avg - get_batch, num = 10
+ - 0.0014s avg - preprocess_batch, num = 10
+ - 0.0010s avg - prepare_noise, num = 10
+ - 0.0002s avg - prepare_latents, num = 10
+ - 0.0001s avg - batch_cleanup, num = 10
+ - 0.0000s avg - prepare_prompt, num = 10
+ - 0.0000s avg - grad_setup, num = 10
+ - 0.0000s avg - scheduler_step, num = 10
+
+JLSCOM_garment_LoRA_flux_schnell:  11%|▌    | 439/4000 [1:29:31<12:15:08, 12.39s/it, lr: 5.0e-06 loss: 9.148e-02]
+Timer 'JLSCOM_garment_LoRA_flux_schnell Timer':
+ - 12.6097s avg - train_loop, num = 10
+ - 7.5692s avg - backward, num = 10
+ - 3.9745s avg - predict_unet, num = 10
+ - 0.4898s avg - calculate_loss, num = 10
+ - 0.3229s avg - optimizer_step, num = 10
+ - 0.2137s avg - encode_prompt, num = 10
+ - 0.0022s avg - get_batch, num = 10
+ - 0.0015s avg - preprocess_batch, num = 10
+ - 0.0010s avg - prepare_noise, num = 10
+ - 0.0002s avg - prepare_latents, num = 10
+ - 0.0001s avg - batch_cleanup, num = 10
+ - 0.0000s avg - prepare_prompt, num = 10
+ - 0.0000s avg - scheduler_step, num = 10
+ - 0.0000s avg - grad_setup, num = 10
+
+JLSCOM_garment_LoRA_flux_schnell:  11%|▌    | 449/4000 [1:32:06<12:42:17, 12.88s/it, lr: 5.0e-06 loss: 1.239e-01]Unloading assistant lora
+                                                                                                                Loading assistant lora                                                                                            
+Saving at step 450                                                                                               
+Saved to output/training_3/JLSCOM_garment_LoRA_flux_schnell/optimizer.pt                                         
+JLSCOM_garment_LoRA_flux_schnell:  11%|▌    | 449/4000 [1:32:17<12:42:17, 12.88s/it, lr: 5.0e-06 loss: 1.239e-01]
+Timer 'JLSCOM_garment_LoRA_flux_schnell Timer':
+ - 15.5244s avg - train_loop, num = 10
+ - 9.4885s avg - backward, num = 10
+ - 4.7840s avg - predict_unet, num = 10
+ - 0.6174s avg - calculate_loss, num = 10
+ - 0.3749s avg - optimizer_step, num = 10
+ - 0.2134s avg - encode_prompt, num = 10
+ - 0.0021s avg - get_batch, num = 10
+ - 0.0014s avg - preprocess_batch, num = 10
+ - 0.0010s avg - prepare_noise, num = 10
+ - 0.0002s avg - prepare_latents, num = 10
+ - 0.0001s avg - batch_cleanup, num = 10
+ - 0.0000s avg - prepare_prompt, num = 10
+ - 0.0000s avg - scheduler_step, num = 10
+ - 0.0000s avg - grad_setup, num = 10
+
+JLSCOM_garment_LoRA_flux_schnell:  11%|▌    | 459/4000 [1:34:11<12:10:13, 12.37s/it, lr: 5.0e-06 loss: 1.423e-01]
+Timer 'JLSCOM_garment_LoRA_flux_schnell Timer':
+ - 12.5363s avg - train_loop, num = 10
+ - 7.5282s avg - backward, num = 10
+ - 3.9644s avg - predict_unet, num = 10
+ - 0.4682s avg - calculate_loss, num = 10
+ - 0.3212s avg - optimizer_step, num = 10
+ - 0.2145s avg - encode_prompt, num = 10
+ - 0.0022s avg - get_batch, num = 10
+ - 0.0015s avg - preprocess_batch, num = 10
+ - 0.0010s avg - prepare_noise, num = 10
+ - 0.0002s avg - prepare_latents, num = 10
+ - 0.0001s avg - batch_cleanup, num = 10
+ - 0.0000s avg - prepare_prompt, num = 10
+ - 0.0000s avg - scheduler_step, num = 10
+ - 0.0000s avg - grad_setup, num = 10
+
+JLSCOM_garment_LoRA_flux_schnell:  12%|▌    | 469/4000 [1:36:17<12:09:01, 12.39s/it, lr: 5.0e-06 loss: 1.281e-01]
+Timer 'JLSCOM_garment_LoRA_flux_schnell Timer':
+ - 12.6119s avg - train_loop, num = 10
+ - 7.5718s avg - backward, num = 10
+ - 3.9847s avg - predict_unet, num = 10
+ - 0.4784s avg - calculate_loss, num = 10
+ - 0.3229s avg - optimizer_step, num = 10
+ - 0.2140s avg - encode_prompt, num = 10
+ - 0.0023s avg - get_batch, num = 10
+ - 0.0015s avg - preprocess_batch, num = 10
+ - 0.0010s avg - prepare_noise, num = 10
+ - 0.0002s avg - prepare_latents, num = 10
+ - 0.0001s avg - batch_cleanup, num = 10
+ - 0.0000s avg - prepare_prompt, num = 10
+ - 0.0000s avg - scheduler_step, num = 10
+ - 0.0000s avg - grad_setup, num = 10
+
+JLSCOM_garment_LoRA_flux_schnell:  12%|▌    | 479/4000 [1:38:23<12:06:56, 12.39s/it, lr: 5.0e-06 loss: 1.088e-01]
+Timer 'JLSCOM_garment_LoRA_flux_schnell Timer':
+ - 12.6097s avg - train_loop, num = 10
+ - 7.5694s avg - backward, num = 10
+ - 3.9750s avg - predict_unet, num = 10
+ - 0.4894s avg - calculate_loss, num = 10
+ - 0.3219s avg - optimizer_step, num = 10
+ - 0.2141s avg - encode_prompt, num = 10
+ - 0.0022s avg - get_batch, num = 10
+ - 0.0015s avg - preprocess_batch, num = 10
+ - 0.0010s avg - prepare_noise, num = 10
+ - 0.0002s avg - prepare_latents, num = 10
+ - 0.0001s avg - batch_cleanup, num = 10
+ - 0.0000s avg - prepare_prompt, num = 10
+ - 0.0000s avg - scheduler_step, num = 10
+ - 0.0000s avg - grad_setup, num = 10
+
+JLSCOM_garment_LoRA_flux_schnell:  12%|▌    | 489/4000 [1:40:30<12:04:52, 12.39s/it, lr: 5.0e-06 loss: 1.677e-01]
+
+Timer 'JLSCOM_garment_LoRA_flux_schnell Timer':
+ - 12.6057s avg - train_loop, num = 10
+ - 7.5693s avg - backward, num = 10
+ - 3.9717s avg - predict_unet, num = 10
+ - 0.4900s avg - calculate_loss, num = 10
+ - 0.3222s avg - optimizer_step, num = 10
+ - 0.2128s avg - encode_prompt, num = 10
+ - 0.0022s avg - get_batch, num = 10
+ - 0.0015s avg - preprocess_batch, num = 10
+ - 0.0010s avg - prepare_noise, num = 10
+ - 0.0002s avg - prepare_latents, num = 10
+ - 0.0001s avg - batch_cleanup, num = 10
+ - 0.0000s avg - prepare_prompt, num = 10
+ - 0.0000s avg - scheduler_step, num = 10
+ - 0.0000s avg - grad_setup, num = 10
+
+JLSCOM_garment_LoRA_flux_schnell:  12%|▌    | 492/4000 [1:40:55<10:04:47, 10.34s/it, lr: 5.0e-06 loss: 1.480e-01]
