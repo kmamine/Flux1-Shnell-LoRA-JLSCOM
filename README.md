@@ -4,7 +4,7 @@
 
 This repository is for training the `Flux1.0-Schnell` model using a sample dataset of garments from Jules.com.
 
-This model is licensed under the `AGPL-3.0 License`.  
+This adapted model is licensed under the `AGPL-3.0 License`.  
 **Commercial use** of the code, configurations, or model adapters is strictly prohibited without explicit written authorization.
 
 The model weights are hosted on [Hugging Face Hub](https://huggingface.co/) at `Amine-CV/JLSCOM_garment_LoRA_flux_schnell_v1` and are distributed under the `AGPL-3.0 License`.
