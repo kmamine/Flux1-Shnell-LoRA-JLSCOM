@@ -76,10 +76,68 @@ The training dataset consists of 100 unlabeled garment images from [Jules.com](h
 
 ### Captioning
 
-Captions were generated using the `OpenAI GPT-4-vision` model. Below is an example script for generating captions:
+Captions were generated using the `OpenAI GPT4-o` model. Below is an example script for generating captions:
 
 ```python
 import openai
+
+prompt = """
+Describe a [garment type] in great detail, incorporating each of the following features where applicable:
+
+Garment Type: Specify the exact type (e.g., T-shirt, jacket).
+Fit and Style: Describe the fit and style (e.g., slim-fit, oversized).
+Color and Pattern: Mention the color and any specific pattern (e.g., solid black, floral).
+
+Fabric/Material: Specify the material used (e.g., cotton, denim).
+Details: Include notable features (e.g., pockets, buttons, logos).
+Display Style: Describe how it's displayed (e.g., on model, flat lay).
+Background and Lighting: Describe the setting, lighting style, or mood.
+Shape: Specify the overall shape (e.g., boxy, fitted, flowy).
+Sleeve Style: Mention the sleeve type (e.g., long sleeve, cap sleeve).
+Neckline: Describe the neckline (e.g., crew neck, V-neck).
+Closures: Specify closure type and placement (e.g., front zipper, side buttons).
+Embellishments: Note any decorative details (e.g., embroidery, sequins).
+Branding: Include logo placement or brand tags if present.
+Patterns/Prints: Mention any additional patterns (e.g., graphic print, color-blocked).
+Pockets: Specify the number, style, and placement.
+Hood: Indicate if a hood is present and if it's adjustable or detachable.
+Cuffs and Hems: Describe the cuff and hem style.
+Fit: Provide a sense of fit (e.g., relaxed, tailored).
+Length: Mention length (e.g., cropped, longline).
+Occasion: Specify the intended use (e.g., casual, formal).
+Style Influence: Describe any style influences (e.g., retro, minimalist).
+Seasonal Suitability: Indicate if it's suited for a particular season.
+Weather Features: Mention any protective or functional weather features.
+Background Type: Describe the background setting if relevant.
+Lighting: Specify the lighting (e.g., soft, spotlight).
+Color Variations: Note any specific color variations or effects.
+Texture: Describe the fabric texture (e.g., quilted, ribbed).
+Weight: Mention the fabric weight (e.g., light, thick).
+Finish: Describe any special finishes (e.g., glossy, distressed).
+Layer Style: Describe any layering features (e.g., lined, reversible).
+Collar Type: Specify the collar type (e.g., mandarin collar).
+Adjustability: Note any adjustable parts (e.g., waist, sleeves).
+Convertible Features: Describe if any features are convertible.
+Aesthetic Style: Mention the aesthetic (e.g., chic, urban).
+Cultural Influence: Describe any cultural or regional influence.
+Size Labeling: Specify the fit or size classification.
+Proportion Accents: Mention any accent features (e.g., high-waisted).
+Special Pockets: Note any specialized pockets.
+Tech Features: Include any technical elements (e.g., reflective stripes).
+Ventilation: Describe any ventilation features (e.g., mesh panels).
+Tone Specificity: Specify tones or palette.
+Color Blocking Pattern: Describe any color blocking.
+Artwork: Describe any artwork details.
+Typography: Note any text or slogans.
+Inspired By: Mention any inspiration sources.
+Climate Suitability: Describe its suitability for specific climates.
+Protection: Mention if it has protective features.
+Target Audience: Describe the intended audience.
+Style Preferences: Note style trends or preferences.
+Ease of Care: Mention care instructions.
+Use a cohesive tone that’s detailed but concise enough to be used as a prompt for an image generation model. Ensure that all relevant details are covered.
+"""
+
 
 openai.api_key = "your_openai_api_key"
 image_path = "path/to/your/image.jpg"
@@ -87,10 +145,10 @@ caption_path = image_path.replace('jpg', 'txt')
 
 with open(image_path, "rb") as image_file:
     response = openai.ChatCompletion.create(
-        model="gpt-4-vision",
+        model="gpt-4o",
         messages=[
-            {"role": "system", "content": "You are an AI that captions images."},
-            {"role": "user", "content": "Please caption this image."}
+            {"role": "system", "content": "You are an AI that captions garment images."},
+            {"role": "user", "content": prompt}
         ],
         files={"file": image_file}
     )
@@ -98,6 +156,64 @@ with open(image_path, "rb") as image_file:
 caption = "JLSCOM " + response["choices"][0]["message"]["content"].strip()
 with open(caption_path, "w") as text_file:
     text_file.write(caption)
+```
+
+We used the following prompt : 
+```txt
+Describe a [garment type] in great detail, incorporating each of the following features where applicable:
+
+Garment Type: Specify the exact type (e.g., T-shirt, jacket).
+Fit and Style: Describe the fit and style (e.g., slim-fit, oversized).
+Color and Pattern: Mention the color and any specific pattern (e.g., solid black, floral).
+
+Fabric/Material: Specify the material used (e.g., cotton, denim).
+Details: Include notable features (e.g., pockets, buttons, logos).
+Display Style: Describe how it's displayed (e.g., on model, flat lay).
+Background and Lighting: Describe the setting, lighting style, or mood.
+Shape: Specify the overall shape (e.g., boxy, fitted, flowy).
+Sleeve Style: Mention the sleeve type (e.g., long sleeve, cap sleeve).
+Neckline: Describe the neckline (e.g., crew neck, V-neck).
+Closures: Specify closure type and placement (e.g., front zipper, side buttons).
+Embellishments: Note any decorative details (e.g., embroidery, sequins).
+Branding: Include logo placement or brand tags if present.
+Patterns/Prints: Mention any additional patterns (e.g., graphic print, color-blocked).
+Pockets: Specify the number, style, and placement.
+Hood: Indicate if a hood is present and if it's adjustable or detachable.
+Cuffs and Hems: Describe the cuff and hem style.
+Fit: Provide a sense of fit (e.g., relaxed, tailored).
+Length: Mention length (e.g., cropped, longline).
+Occasion: Specify the intended use (e.g., casual, formal).
+Style Influence: Describe any style influences (e.g., retro, minimalist).
+Seasonal Suitability: Indicate if it's suited for a particular season.
+Weather Features: Mention any protective or functional weather features.
+Background Type: Describe the background setting if relevant.
+Lighting: Specify the lighting (e.g., soft, spotlight).
+Color Variations: Note any specific color variations or effects.
+Texture: Describe the fabric texture (e.g., quilted, ribbed).
+Weight: Mention the fabric weight (e.g., light, thick).
+Finish: Describe any special finishes (e.g., glossy, distressed).
+Layer Style: Describe any layering features (e.g., lined, reversible).
+Collar Type: Specify the collar type (e.g., mandarin collar).
+Adjustability: Note any adjustable parts (e.g., waist, sleeves).
+Convertible Features: Describe if any features are convertible.
+Aesthetic Style: Mention the aesthetic (e.g., chic, urban).
+Cultural Influence: Describe any cultural or regional influence.
+Size Labeling: Specify the fit or size classification.
+Proportion Accents: Mention any accent features (e.g., high-waisted).
+Special Pockets: Note any specialized pockets.
+Tech Features: Include any technical elements (e.g., reflective stripes).
+Ventilation: Describe any ventilation features (e.g., mesh panels).
+Tone Specificity: Specify tones or palette.
+Color Blocking Pattern: Describe any color blocking.
+Artwork: Describe any artwork details.
+Typography: Note any text or slogans.
+Inspired By: Mention any inspiration sources.
+Climate Suitability: Describe its suitability for specific climates.
+Protection: Mention if it has protective features.
+Target Audience: Describe the intended audience.
+Style Preferences: Note style trends or preferences.
+Ease of Care: Mention care instructions.
+Use a cohesive tone that’s detailed but concise enough to be used as a prompt for an image generation model. Ensure that all relevant details are covered.
 ```
 
 Ensure your dataset is structured as follows:
