@@ -10,6 +10,12 @@ This adapted model is licensed under the `AGPL-3.0 License`.
 The model weights are hosted on [Hugging Face Hub](https://huggingface.co/) at `Amine-CV/JLSCOM_garment_LoRA_flux_schnell_v1` and are distributed under the `AGPL-3.0 License`.
 
 ---
+# Flux1.0 Shnell 
+
+![Shnell architeecture](https://preview.redd.it/fluxs-architecture-diagram-dont-think-theres-a-paper-so-had-v0-7n3ix8do9vgd1.png?width=1080&crop=smart&auto=webp&s=e183bc880d354a40d3a18156c10d7291a4942569)
+Figure Sourced from : [Reddit](https://www.reddit.com/r/LocalLLaMA/comments/1ekr7ji/fluxs_architecture_diagram_dont_think_theres_a/)
+
+---
 
 ## Inference and Image Generation
 
