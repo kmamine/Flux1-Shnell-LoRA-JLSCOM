@@ -59,6 +59,8 @@ cd ./Flux1-Shnell-LoRA-JLSCOM/
 conda env create -f env.yml
 ```
 
+
+
 ---
 
 ## Dataset Preparation
@@ -237,7 +239,7 @@ dataset/
 The model is trained using `ai-toolkit`. Copy the configuration file to the toolkit's `config` directory:
 
 ```shell
-cp train_lora_flux_schnell_24gb_JLSCOM.yaml ai-toolkit/config
+cp train_lora_flux_schnell_24gb_JLSCOM.yaml   ai-toolkit/config
 ```
 
 ### Key Parameters in Configuration File
@@ -262,6 +264,10 @@ network:
   linear: 32
   linear_alpha: 32
 ```
+>[!Warning]
+>The `linear` and `linear_alpha` control the ranks of the matrix for the LoRA adapter.
+>Lower Rank matrices mean less pramerters for the model. 
+
 
 #### Saving Model Weights
 Control checkpoint saving and Hugging Face integration:
@@ -273,6 +279,14 @@ save:
   push_to_hub: true
   hf_repo_id: "Amine-CV/JLSCOM_garment_LoRA_flux_schnell_v1"
 ```
+>[!NOTE]
+>Change the `save_every` parameter to control the frequency ofsaving the checkpoints.
+>Changethe `max_step_saves_to_keep` to control the max neumber of recent checkpoints to keep.
+> The `push_to_hub` helps push the model weights and samples at the end of the training, while  `hf_repo_id` to specify the repo on hugging face hub.
+
+[!Warning]
+> Please note that you need to have the `HF_TOKEN` Enviroment variable to be able to upload.
+> Otherwise you will be prompted.
 
 #### Dataset Configuration
 Specify dataset location and file types:
@@ -281,6 +295,7 @@ datasets:
   folder_path: "../imgs"
   caption_ext: "txt"
 ```
+
 
 #### Model Setup
 Details for the base model and LoRA adapter:
@@ -291,6 +306,8 @@ model:
   quantize: true
   low_vram: true
 ```
+>[!NOTE]
+>The `quantize` and `low_vram` configs help reduce the necessary VRAM to train the model. 
 
 #### Sampling Configuration
 Visualize intermediate results during training:
@@ -303,12 +320,20 @@ sample:
   prompts:
     - "[trigger] holding a sign that says 'I LOVE PROMPTS!'"
 ```
+>[!NOTE]
+>Change the `sample_every` number to save visualizations during training.
+>Also the list of prompts to get several images.
 
 #### Steps for Sampling
 Control the number of steps for generating images:
 ```yaml
 sample_steps: 4
 ```
+> [!WARNING]
+> `Flux1.0` Shnell is a time step distilled model, meaning the creators distilled the model steps from the larger model.
+>  Do not change this as the model was designed with this in mind
+> You can though test a higher number of sampling steps.
+
 
 ---
 
