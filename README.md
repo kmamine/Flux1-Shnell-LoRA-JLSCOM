@@ -226,6 +226,9 @@ dataset/
  ├── img1.txt
  ...
 ```
+>[!NOTE]  
+>We found that a detailed formatting of the prompt has a large effect on the creation of an appropriate image.
+
 
 ---
 
